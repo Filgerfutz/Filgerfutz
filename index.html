@@ -1,0 +1,381 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>FilgerMods — Game Mods & 3D Integration</title>
+<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Rajdhani:wght@400;600;700&display=swap" rel="stylesheet"/>
+<style>
+  :root {
+    --bg: #060608;
+    --bg2: #0d0d0f;
+    --card: #111114;
+    --border: #2a1a1a;
+    --accent: #ff1f1f;
+    --accent2: #ff6b35;
+    --accent3: #c0392b;
+    --text: #f0e6e6;
+    --muted: #7a6060;
+    --glow: 0 0 24px rgba(255,31,31,0.35);
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Rajdhani', sans-serif;
+    font-size: 17px;
+    font-weight: 600;
+    overflow-x: hidden;
+  }
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image:
+      linear-gradient(rgba(255,31,31,0.04) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(255,31,31,0.04) 1px, transparent 1px);
+    background-size: 44px 44px;
+    pointer-events: none;
+    z-index: 0;
+  }
+  nav {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    z-index: 100;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 18px 48px;
+    background: rgba(6,6,8,0.92);
+    backdrop-filter: blur(14px);
+    border-bottom: 1px solid var(--border);
+  }
+  .logo {
+    font-family: 'Orbitron', monospace;
+    font-weight: 900;
+    font-size: 1.3rem;
+    letter-spacing: 2px;
+    color: var(--accent);
+    text-shadow: var(--glow);
+  }
+  .logo span { color: #fff; }
+  nav ul { display: flex; gap: 36px; list-style: none; }
+  nav ul a {
+    color: var(--muted);
+    text-decoration: none;
+    font-size: 0.85rem;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    font-weight: 700;
+    transition: color 0.2s;
+  }
+  nav ul a:hover { color: var(--accent); }
+  .hero {
+    position: relative;
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 140px 20px 100px;
+    z-index: 1;
+    overflow: hidden;
+  }
+  .hero-glow {
+    position: absolute;
+    width: 700px; height: 700px;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(255,31,31,0.07) 0%, transparent 70%);
+    top: 50%; left: 50%;
+    transform: translate(-50%, -50%);
+    pointer-events: none;
+  }
+  .badge {
+    display: inline-block;
+    background: rgba(255,31,31,0.1);
+    border: 1px solid rgba(255,31,31,0.3);
+    color: var(--accent);
+    font-size: 0.72rem;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    font-weight: 700;
+    padding: 7px 18px;
+    border-radius: 2px;
+    margin-bottom: 28px;
+  }
+  h1 {
+    font-family: 'Orbitron', monospace;
+    font-size: clamp(2.6rem, 6vw, 5.2rem);
+    font-weight: 900;
+    line-height: 1.08;
+    margin-bottom: 28px;
+  }
+  h1 .line1 { display: block; color: #fff; }
+  h1 .line2 {
+    display: block;
+    background: linear-gradient(90deg, var(--accent), var(--accent2));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+  .hero p {
+    max-width: 580px;
+    margin: 0 auto 44px;
+    color: var(--muted);
+    font-size: 1.1rem;
+    line-height: 1.75;
+    font-weight: 600;
+  }
+  .btn-group { display: flex; gap: 16px; justify-content: center; flex-wrap: wrap; }
+  .btn-primary {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    background: var(--accent);
+    color: #fff;
+    font-family: 'Orbitron', monospace;
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    padding: 15px 30px;
+    border-radius: 2px;
+    text-decoration: none;
+    transition: all 0.2s;
+    box-shadow: 0 0 32px rgba(255,31,31,0.3);
+    position: relative;
+  }
+  .btn-primary:hover {
+    background: #ff4444;
+    box-shadow: 0 0 56px rgba(255,31,31,0.55);
+    transform: translateY(-2px);
+  }
+  .btn-secondary {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    background: transparent;
+    color: var(--text);
+    font-family: 'Orbitron', monospace;
+    font-size: 0.72rem;
+    font-weight: 700;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    padding: 15px 30px;
+    border-radius: 2px;
+    border: 1px solid var(--border);
+    text-decoration: none;
+    transition: all 0.2s;
+  }
+  .btn-secondary:hover { border-color: var(--accent); color: var(--accent); transform: translateY(-2px); }
+  .stats {
+    position: relative; z-index: 1;
+    display: flex;
+    justify-content: center;
+    border-top: 1px solid var(--border);
+    border-bottom: 1px solid var(--border);
+    background: rgba(11,8,8,0.9);
+  }
+  .stat { flex: 1; max-width: 240px; text-align: center; padding: 36px 20px; border-right: 1px solid var(--border); }
+  .stat:last-child { border-right: none; }
+  .stat-num { font-family: 'Orbitron', monospace; font-size: 2rem; font-weight: 900; color: var(--accent); text-shadow: var(--glow); }
+  .stat-label { font-size: 0.72rem; letter-spacing: 2px; text-transform: uppercase; color: var(--muted); font-weight: 700; margin-top: 6px; }
+  section { position: relative; z-index: 1; padding: 100px 48px; max-width: 1140px; margin: 0 auto; }
+  .section-tag { font-size: 0.7rem; letter-spacing: 4px; text-transform: uppercase; color: var(--accent); font-weight: 700; margin-bottom: 14px; }
+  .section-title { font-family: 'Orbitron', monospace; font-size: clamp(1.6rem, 3vw, 2.6rem); font-weight: 700; margin-bottom: 16px; color: #fff; }
+  .section-sub { color: var(--muted); max-width: 520px; line-height: 1.75; margin-bottom: 56px; font-weight: 600; font-size: 1rem; }
+  .values-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 1px; background: var(--border); border: 1px solid var(--border); }
+  .value-card { background: var(--card); padding: 36px 28px; position: relative; overflow: hidden; transition: background 0.2s; }
+  .value-card::after { content: ''; position: absolute; bottom: 0; left: 0; right: 0; height: 2px; background: linear-gradient(90deg, var(--accent), transparent); opacity: 0; transition: opacity 0.2s; }
+  .value-card:hover { background: #1a0e0e; }
+  .value-card:hover::after { opacity: 1; }
+  .value-icon { font-size: 1.8rem; margin-bottom: 16px; }
+  .value-card h3 { font-family: 'Orbitron', monospace; font-size: 0.8rem; font-weight: 700; letter-spacing: 1px; color: #fff; margin-bottom: 10px; }
+  .value-card p { color: var(--muted); font-size: 0.95rem; line-height: 1.7; font-weight: 600; }
+  .services-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 1px; background: var(--border); border: 1px solid var(--border); }
+  .service-card { background: var(--card); padding: 40px 32px; position: relative; overflow: hidden; transition: background 0.2s; }
+  .service-card::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px; background: linear-gradient(90deg, var(--accent), transparent); opacity: 0; transition: opacity 0.2s; }
+  .service-card:hover { background: #1a0e0e; }
+  .service-card:hover::before { opacity: 1; }
+  .service-icon { font-size: 2rem; margin-bottom: 20px; }
+  .service-card h3 { font-family: 'Orbitron', monospace; font-size: 0.82rem; font-weight: 700; letter-spacing: 1px; color: #fff; margin-bottom: 12px; }
+  .service-card p { color: var(--muted); font-size: 0.95rem; line-height: 1.7; font-weight: 600; }
+  .works-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px; }
+  .work-card { background: var(--card); border: 1px solid var(--border); border-radius: 2px; overflow: hidden; transition: transform 0.2s, border-color 0.2s; }
+  .work-card:hover { transform: translateY(-4px); border-color: rgba(255,31,31,0.35); }
+  .work-thumb { height: 160px; display: flex; align-items: center; justify-content: center; font-size: 2.8rem; }
+  .work-thumb-1 { background: linear-gradient(135deg, #1a0808, #2a0f0f); }
+  .work-thumb-2 { background: linear-gradient(135deg, #0d0d1a, #1a0d1a); }
+  .work-thumb-3 { background: linear-gradient(135deg, #0a1a0a, #1a1a08); }
+  .work-thumb-4 { background: linear-gradient(135deg, #1a1208, #1a0808); }
+  .work-thumb-5 { background: linear-gradient(135deg, #08101a, #0a0a1a); }
+  .work-thumb-6 { background: linear-gradient(135deg, #1a0a14, #12081a); }
+  .work-info { padding: 24px; }
+  .work-tag { font-size: 0.65rem; letter-spacing: 2px; text-transform: uppercase; color: var(--accent); font-weight: 700; margin-bottom: 8px; }
+  .work-info h3 { font-family: 'Orbitron', monospace; font-size: 0.82rem; color: #fff; margin-bottom: 8px; font-weight: 700; }
+  .work-info p { font-size: 0.92rem; color: var(--muted); line-height: 1.65; font-weight: 600; }
+  .reviews-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px; }
+  .review-card { background: var(--card); border: 1px solid var(--border); border-left: 3px solid var(--accent); padding: 32px; transition: background 0.2s; }
+  .review-card:hover { background: #1a0e0e; }
+  .review-card:nth-child(2) { border-left-color: var(--accent2); }
+  .review-card:nth-child(3) { border-left-color: #e74c3c; }
+  .stars { color: #ff4444; font-size: 0.9rem; letter-spacing: 3px; margin-bottom: 16px; }
+  .review-text { color: var(--text); font-size: 1rem; line-height: 1.75; font-weight: 600; margin-bottom: 22px; font-style: italic; }
+  .reviewer { display: flex; align-items: center; gap: 12px; }
+  .reviewer-avatar { width: 38px; height: 38px; border-radius: 50%; background: linear-gradient(135deg, var(--accent), var(--accent3)); display: flex; align-items: center; justify-content: center; font-family: 'Orbitron', monospace; font-size: 0.68rem; font-weight: 700; color: #fff; flex-shrink: 0; }
+  .reviewer-info .name { font-size: 0.88rem; font-weight: 700; color: #fff; }
+  .reviewer-info .platform { font-size: 0.7rem; color: var(--muted); letter-spacing: 1px; text-transform: uppercase; font-weight: 700; }
+  .contact-section { text-align: center; padding: 100px 40px; position: relative; z-index: 1; border-top: 1px solid var(--border); background: linear-gradient(180deg, transparent, rgba(255,31,31,0.02)); }
+  .contact-section p { color: var(--muted); max-width: 500px; margin: 0 auto 44px; line-height: 1.75; font-weight: 600; }
+  .contact-buttons { display: flex; gap: 16px; justify-content: center; flex-wrap: wrap; }
+  .btn-email { display: inline-flex; align-items: center; gap: 10px; background: transparent; color: var(--text); font-family: 'Orbitron', monospace; font-size: 0.72rem; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; padding: 15px 30px; border-radius: 2px; border: 1px solid var(--border); text-decoration: none; transition: all 0.2s; }
+  .btn-email:hover { border-color: var(--accent); color: var(--accent); transform: translateY(-2px); }
+  footer { position: relative; z-index: 1; border-top: 1px solid var(--border); padding: 32px 48px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 16px; }
+  footer .logo { font-size: 1rem; }
+  footer p { color: var(--muted); font-size: 0.8rem; letter-spacing: 1px; font-weight: 700; }
+  .divider { position: relative; z-index: 1; height: 1px; background: var(--border); margin: 0 48px; }
+  @keyframes fadeUp { from { opacity: 0; transform: translateY(22px); } to { opacity: 1; transform: translateY(0); } }
+  .fade-in { opacity: 0; transform: translateY(26px); transition: opacity 0.65s ease, transform 0.65s ease; }
+  .fade-in.visible { opacity: 1; transform: translateY(0); }
+  @keyframes pulse { 0%, 100% { opacity: 0; transform: scale(1); } 50% { opacity: 0.12; transform: scale(1.04); } }
+  @media (max-width: 680px) {
+    nav { padding: 16px 20px; }
+    nav ul { display: none; }
+    section { padding: 70px 20px; }
+    .stats { flex-wrap: wrap; }
+    .stat { min-width: 50%; border-right: none; border-bottom: 1px solid var(--border); }
+    footer { flex-direction: column; text-align: center; padding: 28px 20px; }
+    .divider { margin: 0 20px; }
+  }
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="logo">Filger<span>Mods</span></div>
+  <ul>
+    <li><a href="#values">Why Me</a></li>
+    <li><a href="#services">Services</a></li>
+    <li><a href="#works">Works</a></li>
+    <li><a href="#reviews">Reviews</a></li>
+    <li><a href="#contact">Contact</a></li>
+  </ul>
+</nav>
+
+<div class="hero">
+  <div class="hero-glow"></div>
+  <div>
+    <div class="badge">✦ Open for Commissions</div>
+    <h1>
+      <span class="line1">Custom Mods &</span>
+      <span class="line2">3D Integration</span>
+    </h1>
+    <p>Professional modding for any game. From Skyrim to Cyberpunk, Fallout to Starfield — clean execution, fast delivery, zero headaches.</p>
+    <div class="btn-group">
+      <a href="https://discord.com/users/Filgerfutz" target="_blank" class="btn-primary">⚡ Commission on Discord</a>
+      <a href="#works" class="btn-secondary">View Works →</a>
+    </div>
+  </div>
+</div>
+
+<div class="stats">
+  <div class="stat fade-in"><div class="stat-num">Any</div><div class="stat-label">Game Supported</div></div>
+  <div class="stat fade-in"><div class="stat-num">3D</div><div class="stat-label">Asset Integration</div></div>
+  <div class="stat fade-in"><div class="stat-num">Fast</div><div class="stat-label">Turnaround</div></div>
+  <div class="stat fade-in"><div class="stat-num">100%</div><div class="stat-label">Custom Built</div></div>
+</div>
+
+<section id="values">
+  <div class="section-tag">Why Work With Me</div>
+  <h2 class="section-title fade-in">What You Can Expect</h2>
+  <p class="section-sub fade-in">Every client gets the same standard — professional, reliable, and results that actually match what was asked for.</p>
+  <div class="values-grid fade-in">
+    <div class="value-card"><div class="value-icon">⚡</div><h3>Fast Delivery</h3><p>No dragging feet. I work efficiently and keep you updated so you're never left wondering where your project is.</p></div>
+    <div class="value-card"><div class="value-icon">🎯</div><h3>Precision Work</h3><p>I don't guess. I build exactly what you describe — clean, stable, tested — delivered right the first time.</p></div>
+    <div class="value-card"><div class="value-icon">💬</div><h3>Clear Communication</h3><p>I respond fast, explain clearly, and keep you in the loop at every stage. No ghosting, no confusion.</p></div>
+    <div class="value-card"><div class="value-icon">🛡️</div><h3>Real Experience</h3><p>Worked across major titles — Skyrim, Cyberpunk, Fallout, Starfield and more. This isn't my first rodeo.</p></div>
+    <div class="value-card"><div class="value-icon">🤝</div><h3>Client First</h3><p>Your satisfaction is the finish line. I don't close a project until you're genuinely happy with the result.</p></div>
+    <div class="value-card"><div class="value-icon">🔁</div><h3>Flexible & Reliable</h3><p>Big project or small, simple or complex — I adapt to your needs and deliver consistently every time.</p></div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<section id="services">
+  <div class="section-tag">What I Offer</div>
+  <h2 class="section-title fade-in">Services</h2>
+  <p class="section-sub fade-in">Every project is built from scratch to your exact specification. No copy-paste, no shortcuts.</p>
+  <div class="services-grid fade-in">
+    <div class="service-card"><div class="service-icon">🎮</div><h3>Game Mods</h3><p>Custom modifications for any game — gameplay tweaks, UI overhauls, new content, balance changes. Built stable and clean.</p></div>
+    <div class="service-card"><div class="service-icon">🧊</div><h3>3D Asset Creation</h3><p>Original 3D models designed and built to match your game's art style and technical requirements exactly.</p></div>
+    <div class="service-card"><div class="service-icon">⚙️</div><h3>3D Integration</h3><p>Have existing 3D assets? I get them fully integrated into any game engine or mod framework, seamlessly.</p></div>
+    <div class="service-card"><div class="service-icon">🔧</div><h3>Custom Commissions</h3><p>Something specific in mind that doesn't fit a box? Reach out — if it can be built, I'll build it.</p></div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<section id="works">
+  <div class="section-tag">Portfolio</div>
+  <h2 class="section-title fade-in">Past Works</h2>
+  <p class="section-sub fade-in">Projects across some of the biggest modding titles in the industry. More available on request.</p>
+  <div class="works-grid">
+    <div class="work-card fade-in"><div class="work-thumb work-thumb-1">⚔️</div><div class="work-info"><div class="work-tag">Skyrim — Mod</div><h3>Character & Armor Overhaul</h3><p>Custom armor meshes, textures and lore-friendly integration into the base game world.</p></div></div>
+    <div class="work-card fade-in"><div class="work-thumb work-thumb-2">🤖</div><div class="work-info"><div class="work-tag">Cyberpunk 2077 — Mod</div><h3>Gameplay & Visual Enhancement</h3><p>Custom gameplay modifications and visual asset replacements built with full patch stability.</p></div></div>
+    <div class="work-card fade-in"><div class="work-thumb work-thumb-3">☢️</div><div class="work-info"><div class="work-tag">Fallout New Vegas — Mod</div><h3>Weapon & World Mod Pack</h3><p>New weapon models with custom stats, animations and full mod load order compatibility.</p></div></div>
+    <div class="work-card fade-in"><div class="work-thumb work-thumb-4">🚀</div><div class="work-info"><div class="work-tag">Starfield — Mod</div><h3>Ship & Gear Customisation</h3><p>Custom ship parts and gear assets integrated cleanly into Starfield's modding framework.</p></div></div>
+    <div class="work-card fade-in"><div class="work-thumb work-thumb-5">🦔</div><div class="work-info"><div class="work-tag">Sonic — Mod</div><h3>Character & Stage Mod</h3><p>Custom character skin replacement and stage modifications with clean file structure and zero crashes.</p></div></div>
+    <div class="work-card fade-in"><div class="work-thumb work-thumb-6">🥊</div><div class="work-info"><div class="work-tag">Smashbox — Mod</div><h3>Custom 3D Asset Integration</h3><p>3D assets modeled and fully integrated into the client's existing mod, matching the game's visual language.</p></div></div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<section id="reviews">
+  <div class="section-tag">Client Feedback</div>
+  <h2 class="section-title fade-in">What Clients Say</h2>
+  <p class="section-sub fade-in">Words from people who have commissioned work from FilgerMods.</p>
+  <div class="reviews-grid">
+    <div class="review-card fade-in">
+      <div class="stars">★★★★★</div>
+      <p class="review-text">"Commissioned a Skyrim armor mod and it came back cleaner than I imagined. No bugs, no back and forth. Understood the brief immediately and delivered ahead of schedule."</p>
+      <div class="reviewer"><div class="reviewer-avatar">DW</div><div class="reviewer-info"><div class="name">DuskWarden</div><div class="platform">Discord Commission</div></div></div>
+    </div>
+    <div class="review-card fade-in">
+      <div class="stars">★★★★★</div>
+      <p class="review-text">"Needed 3D assets integrated into my Cyberpunk mod and had no idea how to do it. Filger handled everything, kept me updated throughout, and the result was exactly what I wanted."</p>
+      <div class="reviewer"><div class="reviewer-avatar">NX</div><div class="reviewer-info"><div class="name">NeonX_Mods</div><div class="platform">Discord Commission</div></div></div>
+    </div>
+    <div class="review-card fade-in">
+      <div class="stars">★★★★★</div>
+      <p class="review-text">"Fast, professional and genuinely great at communication. Most modders ghost you halfway through. Filger was responsive start to finish. Commissioning again for my next project."</p>
+      <div class="reviewer"><div class="reviewer-avatar">RV</div><div class="reviewer-info"><div class="name">RavenVault</div><div class="platform">Discord Commission</div></div></div>
+    </div>
+  </div>
+</section>
+
+<div class="contact-section" id="contact">
+  <div class="section-tag">Get In Touch</div>
+  <h2 class="section-title fade-in">Start Your Commission</h2>
+  <p class="fade-in">Tell me what you need and I'll get back to you fast. Discord is the quickest way to reach me — email works too if Discord isn't convenient for you.</p>
+  <div class="contact-buttons fade-in">
+    <a href="https://discord.com/users/Filgerfutz" target="_blank" class="btn-primary">⚡ Discord — Filgerfutz</a>
+    <a href="mailto:yinkafolly06@gmail.com" class="btn-email">✉ yinkafolly06@gmail.com</a>
+  </div>
+</div>
+
+<footer>
+  <div class="logo">Filger<span>Mods</span></div>
+  <p>Custom Mods · 3D Integration · Any Game</p>
+  <p>© 2025 FilgerMods</p>
+</footer>
+
+<script>
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); });
+  }, { threshold: 0.08 });
+  document.querySelectorAll('.fade-in').forEach(el => observer.observe(el));
+</script>
+</body>
+</html>
